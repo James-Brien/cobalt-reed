@@ -77,6 +77,9 @@ class DeadCodeInserter:
         self._used_at: Dict[str, List[int]] = {}
 
     def insert(
+        """
+        Insert operation.
+        """
         self, source: str, language: Language, max_lines: int = 200
     ) -> Tuple[str, int]:
         """Insert dead code blocks into source. Returns (new_source, blocks_inserted)."""
