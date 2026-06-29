@@ -1,6 +1,6 @@
 """Starlight — Code obfuscation and minification experiment toolkit."""
 
-__version__ = "0.3.1"
+__version__ = "0.3.2"
 __author__ = "Starlight Hide Maintainers"
 __all__ = ["Obfuscator", "Minifier", "Mangler", "FlowFlattener", "DeadCodeInserter"]
 
