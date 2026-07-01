@@ -20,10 +20,10 @@ from enum import Enum, auto
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple
 
-from .mangler import Mangler
-from .flattener import FlowFlattener
-from .deadcode import DeadCodeInserter
-from .minifier import Minifier
+from .mangler import EnvMangler
+from .flattener import SchemaFlattener
+from .deadcode import DefaultInserter
+from .minifier import EnvMinifier
 
 
 class Language(Enum):
@@ -42,7 +42,7 @@ class TransformPass(Enum):
 
 
 @dataclass
-class ObfuscationConfig:
+class EnvSchema:
     """Configuration for an obfuscation run."""
 
     language: Language = Language.PYTHON
@@ -62,7 +62,7 @@ class ObfuscationConfig:
 
 
 @dataclass
-class ObfuscationResult:
+class ValidationResult:
     original_path: str
     obfuscated_source: str
     original_size: int
@@ -79,22 +79,22 @@ class ObfuscationResult:
         return ((self.obfuscated_size - self.original_size) / max(self.original_size, 1)) * 100
 
 
-class Obfuscator:
+class EnvValidator:
     """Main obfuscation orchestrator.
 
     Parses source code, applies configured transformation passes in order,
     and produces obfuscated output with reversibility tracking.
     """
 
-    def __init__(self, config: Optional[ObfuscationConfig] = None):
-        self.config = config or ObfuscationConfig()
-        self.mangler = Mangler(seed=self.config.seed)
-        self.flattener = FlowFlattener()
-        self.deadcode = DeadCodeInserter(seed=self.config.seed)
-        self.minifier = Minifier()
+    def __init__(self, config: Optional[EnvSchema] = None):
+        self.config = config or EnvSchema()
+        self.mangler = EnvMangler(seed=self.config.seed)
+        self.flattener = SchemaFlattener()
+        self.deadcode = DefaultInserter(seed=self.config.seed)
+        self.minifier = EnvMinifier()
         self._rng = random.Random(self.config.seed)
 
-    def obfuscate(self, source: str, filepath: str = "<string>") -> ObfuscationResult:
+    def obfuscate(self, source: str, filepath: str = "<string>") -> ValidationResult:
         """Apply all configured obfuscation passes to source code."""
         original = source
         original_entropy = self._shannon_entropy(source)
@@ -132,7 +132,7 @@ class Obfuscator:
                 errors.append(f"{tpass.name}: {e}")
                 continue
 
-        return ObfuscationResult(
+        return ValidationResult(
             original_path=filepath,
             obfuscated_source=source,
             original_size=len(original.encode("utf-8")),
@@ -145,7 +145,7 @@ class Obfuscator:
             errors=errors,
         )
 
-    def obfuscate_file(self, filepath: str | Path) -> ObfuscationResult:
+    def obfuscate_file(self, filepath: str | Path) -> ValidationResult:
         p = Path(filepath)
         source = p.read_text(encoding="utf-8", errors="replace")
         lang = self._detect_language(p)
@@ -154,11 +154,11 @@ class Obfuscator:
 
     def obfuscate_directory(
         self, root: str | Path, extensions: Optional[List[str]] = None
-    ) -> List[ObfuscationResult]:
+    ) -> List[ValidationResult]:
         root_path = Path(root)
         if extensions is None:
             extensions = [".py", ".js", ".ts", ".go"]
-        results: List[ObfuscationResult] = []
+        results: List[ValidationResult] = []
         for ext in extensions:
             for filepath in root_path.rglob(f"*{ext}"):
                 if filepath.is_file() and ".git" not in filepath.parts:

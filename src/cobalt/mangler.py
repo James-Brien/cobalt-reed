@@ -6,7 +6,7 @@ import string
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Set, Tuple
 
-from .obfuscator import Language
+from .validator import Language
 
 
 @dataclass
@@ -16,7 +16,7 @@ class MangleResult:
     count: int
 
 
-class Mangler:
+class EnvMangler:
     """Probabilistic identifier shuffler for source code obfuscation.
 
     Generates valid but meaningless identifier names, maintains a mapping

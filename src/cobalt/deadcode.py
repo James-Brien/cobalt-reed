@@ -4,10 +4,10 @@ import random
 import textwrap
 from typing import Dict, List, Optional, Tuple
 
-from .obfuscator import Language
+from .validator import Language
 
 
-class DeadCodeInserter:
+class DefaultInserter:
     """Inserts plausible-looking dead code into source files.
 
     Generates language-appropriate code snippets that:

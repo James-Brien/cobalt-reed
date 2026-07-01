@@ -1,2 +1,4 @@
-# starlight hide -- exclude runtime cruft
+# cobalt reed -- exclude .env files, __pycache__/
 __pycache__/
+*.pyc
+.DS_Store

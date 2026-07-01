@@ -1,4 +1,4 @@
-"""Starlight CLI — code obfuscation toolkit."""
+"""Cobalt CLI — code obfuscation toolkit."""
 
 import json
 import logging
@@ -9,7 +9,7 @@ from typing import Optional
 import click
 
 from . import __version__
-from .obfuscator import Obfuscator, ObfuscationConfig, Language, TransformPass
+from .validator import EnvValidator, EnvSchema, Language, TransformPass
 
 
 def setup_logging(verbose: bool = False) -> None:
@@ -27,11 +27,11 @@ PASS_MAP = {
 
 
 @click.group()
-@click.version_option(version=__version__, prog_name="starlight")
+@click.version_option(version=__version__, prog_name="cobalt")
 @click.option("-v", "--verbose", is_flag=True)
 @click.pass_context
 def main(ctx: click.Context, verbose: bool) -> None:
-    """Starlight — Code obfuscation and minification experiment toolkit."""
+    """Cobalt — Code obfuscation and minification experiment toolkit."""
     setup_logging(verbose)
     ctx.ensure_object(dict)
     ctx.obj["verbose"] = verbose
@@ -54,12 +54,12 @@ def obfuscate(filepath: str, passes: str, seed: int, output: Optional[str],
         click.echo(f"Invalid passes: {passes}. Valid: {list(PASS_MAP.keys())}", err=True)
         return
 
-    config = ObfuscationConfig(
+    config = EnvSchema(
         passes=pass_list, seed=seed, aggressive=aggressive,
         flatten_probability=0.5 if aggressive else 0.3,
         max_dead_code_lines=500 if aggressive else 200,
     )
-    obf = Obfuscator(config=config)
+    obf = EnvValidator(config=config)
     result = obf.obfuscate_file(filepath)
 
     if output:
@@ -90,8 +90,8 @@ def batch(directory: str, passes: str, extensions: str, seed: int) -> None:
     pass_list = [PASS_MAP[p] for p in pass_names if p in PASS_MAP]
     ext_list = [e.strip() for e in extensions.split(",")]
 
-    config = ObfuscationConfig(passes=pass_list, seed=seed)
-    obf = Obfuscator(config=config)
+    config = EnvSchema(passes=pass_list, seed=seed)
+    obf = EnvValidator(config=config)
     results = obf.obfuscate_directory(directory, extensions=ext_list)
 
     total_orig = sum(r.original_size for r in results)

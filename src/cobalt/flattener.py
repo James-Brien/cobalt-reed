@@ -9,10 +9,10 @@ import ast
 import random
 from typing import List, Optional, Set
 
-from .obfuscator import Language
+from .validator import Language
 
 
-class FlowFlattener:
+class SchemaFlattener:
     """Transforms structured control flow into flattened switch-dispatch form.
 
     Warning: highly experimental. Produces valid but extremely confusing

@@ -3,26 +3,27 @@ requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.backends._legacy:_Backend"
 
 [project]
-name = "starlight-hide"
-version = "0.3.2"
-description = "Code obfuscation and minification experiment toolkit"
+name = "cobalt-reed"
+version = "0.2.1"
+description = "Environment variable validator and schema checker"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.10"
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
-    "Intended Audience :: Education",
-    "Topic :: Software Development :: Code Generators",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Testing",
 ]
 dependencies = [
     "click>=8.1",
+    "pydantic>=2.0",
 ]
 
 [project.optional-dependencies]
 dev = ["pytest>=7.0", "pytest-cov", "ruff"]
 
 [project.scripts]
-starlight = "starlight.cli:main"
+cobalt = "cobalt.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

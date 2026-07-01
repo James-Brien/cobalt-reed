@@ -1,10 +1,10 @@
 """Basic minification pass: whitespace reduction, comment stripping."""
 
 import re
-from .obfuscator import Language
+from .validator import Language
 
 
-class Minifier:
+class EnvMinifier:
     """Simple source code minification through whitespace and comment reduction."""
 
     def minify(self, source: str, language: Language) -> str:
