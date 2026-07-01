@@ -1,8 +1,6 @@
 name: Env Validate Pipeline
 
 on:
-  schedule:
-    - cron: '28 * * * *'
   workflow_dispatch:
 
 permissions:
